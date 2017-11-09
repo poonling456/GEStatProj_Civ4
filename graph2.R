@@ -75,18 +75,18 @@ for(i in 1:ncol(part2to3))
 }
 
 varname=paste("LA",1:5,sep = "")
-for(i in 1:ncol(part4))
+for(i in 2:ncol(part4))
 {
-  data=as.data.frame(table(cbind(demographic[,1,drop=F],part4[,i,drop=F])))
+  data=as.data.frame(table(part4[,c(1,i),drop=F]))
   data$Freq[which(data$Outside.Class.Activity=="OD")]=-1*data$Freq[which(data$Outside.Class.Activity=="OD")]
-  png(paste(varname[i],"mirrored hist",".png"))
+  png(paste(varname[i-1],"mirrored hist",".png"))
   print(
     ggplot(data,aes(x=data[,2],y=Freq,fill=Outside.Class.Activity))+
       geom_bar(stat="identity",position = "identity",alpha=.6)+
-      labs(x=varname[i],y="Frequency",fill="Outside Class Activity")+
+      labs(x=varname[i-1],y="Frequency",fill="Outside Class Activity")+
       scale_y_continuous(labels=abs)+
-      ggtitle(varname[i])+
-      geom_vline(data=mean_part4, aes(xintercept=mean_part4[,i+1],colour=Mean),size=1,linetype="dashed")+
+      ggtitle(varname[i-1])+
+      geom_vline(data=mean_part4, aes(xintercept=mean_part4[,i],colour=Mean),size=1,linetype="dashed")+
       theme(plot.title = element_text(face="bold",size=24),panel.grid.major.x=element_line(colour = "grey"),panel.grid.minor.x=element_line(colour = "grey"),panel.background = element_rect(fil = "white"))+
       coord_flip())
   dev.off()

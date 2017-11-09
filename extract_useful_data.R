@@ -10,10 +10,10 @@ quantify <- function(response, choice, converted_num) {
 part1=rawdata[,5:55]
 part2to3=rawdata[,56:73]
 
-OD=rawdata[which(is.na(rawdata$Q41)),111:115]
-Civ4=rawdata[which(!is.na(rawdata$Q41)),116:120]
-names(OD)=c("LA1","LA2","LA3","LA4","LA5")
-names(Civ4)=c("LA1","LA2","LA3","LA4","LA5")
+OD=cbind("OD",rawdata[which(is.na(rawdata$Q41)),111:115])
+Civ4=cbind("Civ4",rawdata[which(!is.na(rawdata$Q41)),116:120])
+names(OD)=c("Outside Class Activity","LA1","LA2","LA3","LA4","LA5")
+names(Civ4)=c("Outside Class Activity","LA1","LA2","LA3","LA4","LA5")
 part4=rbind(Civ4,OD)
 
 grade=rawdata[,94:97]
@@ -91,12 +91,15 @@ names(mean_part1)[1]="Mean"
 mean_part2to3=aggregate(part2to3,list(demographic[,1]),function(x) mean(as.numeric(x),na.rm=T))
 names(mean_part2to3)[1]="Mean"
 
-mean_part4=aggregate(part4,list(demographic[,1]),function(x) mean(as.numeric(x),na.rm=T))
+mean_part4=aggregate(part4[,-1],list(part4[,1]),function(x) mean(as.numeric(x),na.rm=T))
 names(mean_part4)[1]="Mean"
 
 mean_grade=aggregate(grade,list(demographic[,1]),function(x) mean(as.numeric(x),na.rm=T))
 names(mean_grade)[1]="Mean"
 
 #ttest
-testResult=t(apply(cbind(part1,part2to3,part4,grade),2, function(x) unlist(t.test(x~demographic$`Outside Class Activity`))))
+testResult=t(apply(cbind(part1,part2to3,grade),2, function(x) unlist(t.test(x~demographic$`Outside Class Activity`))))
 write.csv(testResult,file="ttest.csv")
+
+testResult_4=t(apply(part4[,-1],2, function(x) unlist(t.test(x~part4$`Outside Class Activity`))))
+write.csv(testResult_4,file="ttest part 4.csv")
